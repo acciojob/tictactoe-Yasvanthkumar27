@@ -1,16 +1,161 @@
-<!DOCTYPE html>
-
-<html>
-
+<!DOCTYPE html><html lang="en">
 <head>
-	<link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tic Tac Toe</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #fafafa;
+      padding: 40px;
+    }
+    .container {
+      width: 400px;
+      text-align: center;
+    }
+    h1 {
+      font-size: 40px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      font-family: "Brush Script MT", cursive;
+    }
+    input {
+      width: 90%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 2px solid #aaa;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      border: 2px solid #444;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 10px;
+      background: white;
+    }
+    .board {
+      width: 300px;
+      height: 300px;
+      margin: 20px auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+      gap: 2px;
+    }
+    .cell {
+      background: #f8d5d5;
+      border: 2px solid #444;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 40px;
+      cursor: pointer;
+    }
+    .message {
+      margin-top: 15px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+  </style>
 </head>
-
 <body>
-	<!-- the entire body must be written by student -->
-    <script type="text/javascript" src="./script.js">
-</script>
+  <div class="container">
+    <h1>Tic Tac Toe</h1><div id="start-screen">
+  <input type="text" id="player-1" placeholder="Player 1 enter name" />
+  <input type="text" id="player-2" placeholder="Player 2 enter name" />
+  <button id="submit">Start Game</button>
+</div>
 
-</body>
+<div id="game-screen" style="display:none;">
+  <div class="message" id="turnMessage"></div>
+  <div class="board" id="board"></div>
+</div>
 
+  </div>  <script>
+    const submitBtn = document.getElementById("submit");
+    const gameScreen = document.getElementById("game-screen");
+    const startScreen = document.getElementById("start-screen");
+    const boardDiv = document.getElementById("board");
+    const message = document.getElementById("turnMessage");
+
+    let player1 = "";
+    let player2 = "";
+    let currentPlayer = "X";
+    let gameActive = true;
+    let board = ["", "", "", "", "", "", "", "", ""];
+
+    const winningPatterns = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      [0, 4, 8],
+      [2, 4, 6]
+    ];
+
+    submitBtn.addEventListener("click", () => {
+      player1 = document.getElementById("player-1").value.trim();
+      player2 = document.getElementById("player-2").value.trim();
+
+      if (!player1 || !player2) {
+        alert("Enter both player names!");
+        return;
+      }
+
+      startScreen.style.display = "none";
+      gameScreen.style.display = "block";
+      message.textContent = ${player1}, you're up;
+      loadBoard();
+    });
+
+    function loadBoard() {
+      boardDiv.innerHTML = "";
+      for (let i = 0; i < 9; i++) {
+        const cell = document.createElement("div");
+        cell.classList.add("cell");
+        cell.setAttribute("id", i);
+        cell.addEventListener("click", handleCellClick);
+        boardDiv.appendChild(cell);
+      }
+    }
+
+    function handleCellClick(e) {
+      const id = e.target.id;
+
+      if (!gameActive || board[id] !== "") return;
+
+      board[id] = currentPlayer;
+      e.target.textContent = currentPlayer;
+
+      checkWinner();
+
+      currentPlayer = currentPlayer === "X" ? "O" : "X";
+      updateTurnMessage();
+    }
+
+    function updateTurnMessage() {
+      message.textContent = currentPlayer === "X" ? ${player1}, you're up : ${player2}, you're up;
+    }
+
+    function checkWinner() {
+      for (let pattern of winningPatterns) {
+        const [a, b, c] = pattern;
+
+        if (board[a] && board[a] === board[b] && board[b] === board[c]) {
+          const winner = board[a] === "X" ? player1 : player2;
+          message.textContent = ${winner}, congratulations you won!;
+          gameActive = false;
+          return;
+        }
+      }
+    }
+  </script></body>
 </html>
